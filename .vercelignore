@@ -1,0 +1,5 @@
+# Vercel builds from source; these local files aren't needed for that.
+dist
+diwali.zip
+*.png
+Mere Tumhare Sabke Liye Happy Diwali.mp3

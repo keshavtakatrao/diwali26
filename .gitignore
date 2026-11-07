@@ -1,0 +1,9 @@
+node_modules
+dist
+*.local
+.vercel
+
+# Local reference files, not used by the site (it plays src/assets/happy-diwali.mp3)
+/Screenshot from *.png
+/Mere Tumhare Sabke Liye Happy Diwali.mp3
+/diwali.zip
