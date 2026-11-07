@@ -128,12 +128,14 @@ export default function Dock({ onFire }) {
             </svg>
             Burst Crackers
           </button>
+          {/* Hidden for now: the share page is reached only by its link, /#share.
           <a className="cracker-toggle" href="#share">
             <svg className="cracker-icon" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M17 8a3 3 0 1 0-2.8-4M17 8 7 12m10 4L7 12m10 4a3 3 0 1 1-2.8 4M7 12a3 3 0 1 1 0-.01" />
             </svg>
             Share a Wish
           </a>
+          */}
         </div>
       )}
     </div>
