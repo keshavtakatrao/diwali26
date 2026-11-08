@@ -133,3 +133,23 @@ export async function buildShareLink({ to, from, message }) {
 
   return `${shareBase()}?w=${toBase64Url(payload)}#k=${toBase64Url(keyBytes)}`
 }
+
+// The URL is encoded so the encrypted payload and its fragment key are both retained
+// as the shortening service's destination.
+export async function shortenShareLink(link) {
+  const endpoint = new URL('https://tinyurl.com/api-create.php')
+  endpoint.searchParams.set('url', link)
+
+  const response = await fetch(endpoint)
+  if (!response.ok) throw new Error(`URL shortener returned ${response.status}`)
+
+  const shortened = (await response.text()).trim()
+  const url = new URL(shortened)
+  if (
+    (url.protocol !== 'https:' && url.protocol !== 'http:') ||
+    (url.hostname !== 'tinyurl.com' && url.hostname !== 'www.tinyurl.com')
+  ) {
+    throw new Error('URL shortener returned an invalid URL')
+  }
+  return url.href
+}

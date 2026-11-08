@@ -1,0 +1,68 @@
+# Deploys to Vercel: pushes to main go to production, pull requests get a preview.
+#
+# Needs three repository secrets (GitHub → Settings → Secrets and variables → Actions):
+#   VERCEL_TOKEN       create at https://vercel.com/account/tokens
+#   VERCEL_ORG_ID      "orgId" in .vercel/project.json after running `npx vercel link`
+#   VERCEL_PROJECT_ID  "projectId" in the same file
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One deployment per branch at a time; a newer push waits rather than racing.
+concurrency:
+  group: vercel-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  # Production for main, preview for everything else.
+  VERCEL_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && 'production' || 'preview' }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Pull requests from forks can't read the secrets, so don't try.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && 'production' || 'preview' }}
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install the Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel settings and environment variables
+        run: vercel pull --yes --environment=$VERCEL_ENVIRONMENT --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build
+        run: |
+          if [ "$VERCEL_ENVIRONMENT" = production ]; then
+            vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+          else
+            vercel build --token=${{ secrets.VERCEL_TOKEN }}
+          fi
+
+      - name: Deploy
+        id: deploy
+        run: |
+          if [ "$VERCEL_ENVIRONMENT" = production ]; then
+            url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          else
+            url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deployed to $url" >> "$GITHUB_STEP_SUMMARY"

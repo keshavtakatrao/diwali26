@@ -6,6 +6,7 @@ import {
   NAME_LIMIT,
   buildShareLink,
   canEncrypt,
+  shortenShareLink,
 } from '../wishes.js'
 import Lights from './Lights.jsx'
 
@@ -38,7 +39,10 @@ export default function SharePage() {
   const [from, setFrom] = useState('')
   const [message, setMessage] = useState(DEFAULT_WISH)
   const [status, setStatus] = useState('')
+  const [shortLink, setShortLink] = useState('')
+  const [isShortening, setIsShortening] = useState(false)
   const resetStatus = useRef(null)
+  const latestLink = useRef('')
 
   useEffect(() => {
     document.documentElement.dataset.theme = 'night'
@@ -59,12 +63,16 @@ export default function SharePage() {
     }
   }, [to, from, message, isSecure])
 
+  useEffect(() => {
+    latestLink.current = link
+    setShortLink('')
+  }, [link])
+
   // What the recipient will see: an empty "from" falls back to the default signature.
   const signedBy = from.trim() || DEFAULT_FROM
   const shownMessage = message.trim() || DEFAULT_WISH
   // No names here: this text travels unencrypted alongside the link.
   const shareText = 'A Diwali wish for you:'
-  const whatsappHref = `https://wa.me/?text=${encodeURIComponent(`${shareText} ${link}`)}`
   const canShareNatively = typeof navigator.share === 'function'
 
   const flash = (text) => {
@@ -74,22 +82,64 @@ export default function SharePage() {
   }
 
   const copyLink = async () => {
-    if (!link) return
+    const url = await getShortLink()
+    if (!url) return
     try {
-      await navigator.clipboard.writeText(link)
-      flash('Link copied. Paste it anywhere to share.')
+      await navigator.clipboard.writeText(url)
+      flash('Short link copied. Paste it anywhere to share.')
     } catch {
       flash('Couldn’t copy automatically. Select the link above and copy it.')
     }
   }
 
   const shareNatively = async () => {
-    if (!link) return
+    const url = await getShortLink()
+    if (!url) return
     try {
-      await navigator.share({ title: 'Happy Diwali', text: shareText, url: link })
+      await navigator.share({ title: 'Happy Diwali', text: shareText, url })
     } catch {
       // Closing the share sheet counts as an error; nothing to do.
     }
+  }
+
+  const getShortLink = async () => {
+    if (!link) return null
+    if (shortLink) return shortLink
+
+    const linkToShorten = link
+    setIsShortening(true)
+    try {
+      const shortened = await shortenShareLink(linkToShorten)
+      if (latestLink.current !== linkToShorten) return null
+      setShortLink(shortened)
+      return shortened
+    } catch {
+      flash('Couldn’t shorten the link. Please try again.')
+      return null
+    } finally {
+      setIsShortening(false)
+    }
+  }
+
+  const shareOnWhatsApp = async () => {
+    if (!link) return
+
+    const shareWindow = window.open('', '_blank')
+    if (!shareWindow) {
+      flash('Your browser blocked the WhatsApp window. Please allow pop-ups and try again.')
+      return
+    }
+
+    const url = await getShortLink()
+    if (!url) {
+      shareWindow.close()
+      return
+    }
+
+    shareWindow.opener = null
+    shareWindow.location.replace(
+      `https://wa.me/?text=${encodeURIComponent(`${shareText} ${url}`)}`,
+    )
   }
 
   return (
@@ -187,24 +237,39 @@ export default function SharePage() {
             <span>Your link</span>
             <input
               readOnly
-              value={link}
+              value={shortLink || link}
               placeholder={isSecure ? 'Preparing your link…' : ''}
               onFocus={(event) => event.target.select()}
             />
             <small className="share-note">
-              Names and message are encrypted. Only someone with the full link can read them.
+              Names and message are encrypted. Sharing creates a short link with TinyURL.
             </small>
           </label>
 
           <div className="share-actions" aria-disabled={!link}>
-            <button type="button" className="share-button share-button-primary" onClick={copyLink}>
-              Copy link
+            <button
+              type="button"
+              className="share-button share-button-primary"
+              disabled={isShortening}
+              onClick={copyLink}
+            >
+              {isShortening ? 'Shortening link…' : 'Copy link'}
             </button>
-            <a className="share-button" href={whatsappHref} target="_blank" rel="noreferrer">
+            <button
+              type="button"
+              className="share-button"
+              disabled={isShortening}
+              onClick={shareOnWhatsApp}
+            >
               Send on WhatsApp
-            </a>
+            </button>
             {canShareNatively && (
-              <button type="button" className="share-button" onClick={shareNatively}>
+              <button
+                type="button"
+                className="share-button"
+                disabled={isShortening}
+                onClick={shareNatively}
+              >
                 More ways to share
               </button>
             )}
