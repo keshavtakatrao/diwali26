@@ -813,6 +813,13 @@ h1 {
   transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 
+.homepage-info-button {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 8;
+}
+
 .share-info-button:hover,
 .share-info-button:focus-visible {
   border-color: #f7a823;
