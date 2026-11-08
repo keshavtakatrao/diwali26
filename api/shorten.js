@@ -24,20 +24,18 @@ export default async function handler(request, response) {
   }
 
   try {
-    const endpoint = new URL('https://tinyurl.com/api-create.php')
+    const endpoint = new URL('https://is.gd/create.php')
+    endpoint.searchParams.set('format', 'simple')
     endpoint.searchParams.set('url', destination.href)
 
-    const tinyUrlResponse = await fetch(endpoint)
-    if (!tinyUrlResponse.ok) {
+    const shortenerResponse = await fetch(endpoint)
+    if (!shortenerResponse.ok) {
       return response.status(502).json({ error: 'URL shortener unavailable' })
     }
 
-    const shortened = (await tinyUrlResponse.text()).trim()
+    const shortened = (await shortenerResponse.text()).trim()
     const shortenedUrl = new URL(shortened)
-    if (
-      shortenedUrl.protocol !== 'https:' ||
-      !['tinyurl.com', 'www.tinyurl.com'].includes(shortenedUrl.hostname)
-    ) {
+    if (shortenedUrl.protocol !== 'https:' || shortenedUrl.hostname !== 'is.gd') {
       return response.status(502).json({ error: 'Invalid short URL returned' })
     }
 

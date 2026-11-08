@@ -134,7 +134,7 @@ export async function buildShareLink({ to, from, message }) {
   return `${shareBase()}?w=${toBase64Url(payload)}#k=${toBase64Url(keyBytes)}`
 }
 
-// The browser calls our same-origin proxy so TinyURL's API does not need to
+// The browser calls our same-origin proxy so the shortener API does not need to
 // expose CORS headers to the page.
 export async function shortenShareLink(link) {
   const response = await fetch('/api/shorten', {
@@ -146,7 +146,7 @@ export async function shortenShareLink(link) {
 
   const { url: shortened } = await response.json()
   const url = new URL(shortened)
-  if (url.protocol !== 'https:' || !['tinyurl.com', 'www.tinyurl.com'].includes(url.hostname)) {
+  if (url.protocol !== 'https:' || url.hostname !== 'is.gd') {
     throw new Error('URL shortener returned an invalid URL')
   }
   return url.href
