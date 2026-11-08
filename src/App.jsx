@@ -37,6 +37,7 @@ export default function App() {
   const litCount = lit.filter(Boolean).length
   // The page starts dark; the first press turns it on, later presses cycle the themes.
   const [presses, setPresses] = useState(0)
+  const [showGuide, setShowGuide] = useState(false)
   const isOn = presses > 0
   const theme = isOn ? THEMES[(presses - 1) % THEMES.length] : 'off'
 
@@ -114,6 +115,16 @@ export default function App() {
     <>
       {isOn && <Fireworks ref={fireworks} />}
       <main className="scroll-track">
+        <button
+          className="share-info-button homepage-info-button"
+          type="button"
+          aria-label="Show interactive elements"
+          aria-haspopup="dialog"
+          aria-expanded={showGuide}
+          onClick={() => setShowGuide(true)}
+        >
+          i
+        </button>
         <section
           className={isLongWish ? 'hero is-long-wish' : 'hero'}
           style={{ '--lit': litCount / DIYA_COUNT }}
@@ -173,6 +184,37 @@ export default function App() {
           </span>
         </section>
       </main>
+      {showGuide && (
+        <div className="share-guide" role="presentation" onClick={() => setShowGuide(false)}>
+          <section
+            className="share-guide-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="homepage-guide-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="share-guide-heading">
+              <h2 id="homepage-guide-title">Interactive elements</h2>
+              <button
+                className="share-guide-close"
+                type="button"
+                aria-label="Close interactive elements guide"
+                onClick={() => setShowGuide(false)}
+              >
+                ×
+              </button>
+            </div>
+            <ul className="share-guide-list">
+              <li><strong>Light switch</strong><span>Turn on the celebration and cycle the page themes.</span></li>
+              <li><strong>Diyas</strong><span>Tap each diya to light it. Light all seven to trigger fireworks.</span></li>
+              <li><strong>Akash Kandil</strong><span>Tap a hanging kandil to make it swing.</span></li>
+              <li><strong>Sky</strong><span>Tap anywhere in the sky to launch a firework.</span></li>
+              <li><strong>Music</strong><span>Use the music control after turning on the lights.</span></li>
+              <li><strong>Scroll</strong><span>Scroll down to discover the full celebration.</span></li>
+            </ul>
+          </section>
+        </div>
+      )}
       {isOn && <Dock onFire={(kind) => fireworks.current?.fire(kind)} />}
       <audio
         ref={music}
