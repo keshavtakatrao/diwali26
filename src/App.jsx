@@ -207,6 +207,7 @@ export default function App() {
             <ul className="share-guide-list">
               <li><strong>Light switch</strong><span>Turn on the celebration and cycle the page themes.</span></li>
               <li><strong>Diyas</strong><span>Tap each diya to light it. Light all seven to trigger fireworks.</span></li>
+              <li><strong>Akash Kandil</strong><span>Tap a hanging kandil to make it swing.</span></li>
               <li><strong>Sky</strong><span>Tap anywhere in the sky to launch a firework.</span></li>
               <li><strong>Music</strong><span>Use the music control after turning on the lights.</span></li>
               <li><strong>Scroll</strong><span>Scroll down to discover the full celebration.</span></li>

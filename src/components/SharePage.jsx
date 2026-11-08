@@ -204,6 +204,7 @@ export default function SharePage() {
               <li><strong>Share</strong><span>Copy the short link, send it on WhatsApp, or use more sharing options.</span></li>
               <li><strong>Preview</strong><span>Open the recipient&apos;s celebration before sharing.</span></li>
               <li><strong>Lights</strong><span>Use the celebration controls to turn lights and effects on or off.</span></li>
+              <li><strong>Akash Kandil</strong><span>Tap a hanging kandil to make it swing.</span></li>
             </ul>
           </section>
         </div>
