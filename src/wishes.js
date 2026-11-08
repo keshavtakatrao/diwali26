@@ -134,21 +134,19 @@ export async function buildShareLink({ to, from, message }) {
   return `${shareBase()}?w=${toBase64Url(payload)}#k=${toBase64Url(keyBytes)}`
 }
 
-// The URL is encoded so the encrypted payload and its fragment key are both retained
-// as the shortening service's destination.
+// The browser calls our same-origin proxy so TinyURL's API does not need to
+// expose CORS headers to the page.
 export async function shortenShareLink(link) {
-  const endpoint = new URL('https://tinyurl.com/api-create.php')
-  endpoint.searchParams.set('url', link)
-
-  const response = await fetch(endpoint)
+  const response = await fetch('/api/shorten', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url: link }),
+  })
   if (!response.ok) throw new Error(`URL shortener returned ${response.status}`)
 
-  const shortened = (await response.text()).trim()
+  const { url: shortened } = await response.json()
   const url = new URL(shortened)
-  if (
-    (url.protocol !== 'https:' && url.protocol !== 'http:') ||
-    (url.hostname !== 'tinyurl.com' && url.hostname !== 'www.tinyurl.com')
-  ) {
+  if (url.protocol !== 'https:' || !['tinyurl.com', 'www.tinyurl.com'].includes(url.hostname)) {
     throw new Error('URL shortener returned an invalid URL')
   }
   return url.href
