@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import copy from 'copy-to-clipboard'
 import {
   DEFAULT_FROM,
   DEFAULT_WISH,
@@ -85,7 +86,8 @@ export default function SharePage() {
     const url = await getShortLink()
     if (!url) return
     try {
-      await navigator.clipboard.writeText(url)
+      const copied = copy(url)
+      if (!copied) throw new Error('Clipboard copy was rejected')
       flash('Short link copied. Paste it anywhere to share.')
     } catch {
       flash('Couldn’t copy automatically. Select the link above and copy it.')
