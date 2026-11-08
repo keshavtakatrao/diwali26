@@ -141,7 +141,7 @@ export default function App() {
 
             {shared ? (
               <div className="shared-wish">
-                {shared.to && <p className="shared-to">Dear {shared.to},</p>}
+                {shared.to && <p className="shared-to">{shared.to},</p>}
                 <p className="shared-message">{shared.message}</p>
                 {shared.from && <p className="shared-from">{shared.from}</p>}
               </div>
