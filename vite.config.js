@@ -12,6 +12,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    server: {
+      allowedHosts: ['.vercel.run'],
+    },
     define: {
       'import.meta.env.VITE_SHARE_BASE_URL': JSON.stringify(shareBaseUrl),
     },
