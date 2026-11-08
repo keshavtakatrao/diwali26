@@ -221,7 +221,7 @@ export default function SharePage() {
             <p className="share-preview-hindi" lang="hi">
               शुभ दीपावली
             </p>
-            {to.trim() && <p className="shared-to">Dear {to.trim()},</p>}
+            {to.trim() && <p className="shared-to">{to.trim()},</p>}
             <p className="share-preview-message">{shownMessage}</p>
             <p className="shared-from">{signedBy}</p>
           </article>
