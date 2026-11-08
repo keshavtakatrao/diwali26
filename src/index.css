@@ -790,6 +790,100 @@ h1 {
   margin-bottom: 2rem;
 }
 
+.share-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.share-info-button {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  margin-top: 0.2rem;
+  border: 1px solid rgb(255 235 190 / 0.35);
+  border-radius: 999px;
+  color: #ffe7ad;
+  background: rgb(255 255 255 / 0.06);
+  font: 700 0.9rem/1 Georgia, serif;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.share-info-button:hover,
+.share-info-button:focus-visible {
+  border-color: #f7a823;
+  background: rgb(247 168 35 / 0.2);
+  transform: translateY(-1px);
+}
+
+.share-guide {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgb(8 9 18 / 0.76);
+}
+
+.share-guide-card {
+  width: min(100%, 28rem);
+  padding: 1.5rem;
+  border: 1px solid rgb(255 220 145 / 0.28);
+  border-radius: 1.25rem;
+  background: #171528;
+  box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 0.42);
+}
+
+.share-guide-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.share-guide-heading h2 {
+  margin: 0;
+  color: #fff1cc;
+  font-size: 1.25rem;
+}
+
+.share-guide-close {
+  border: 0;
+  color: #ffe7ad;
+  background: transparent;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.share-guide-list {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: rgb(255 244 218 / 0.78);
+}
+
+.share-guide-list strong {
+  display: block;
+  margin-bottom: 0.15rem;
+  color: #f7a823;
+  font-size: 0.9rem;
+}
+
+.share-guide-list span {
+  display: block;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
 .share-hindi {
   margin: 0;
   font-family: var(--font-display);

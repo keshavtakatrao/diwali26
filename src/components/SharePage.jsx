@@ -42,6 +42,7 @@ export default function SharePage() {
   const [status, setStatus] = useState('')
   const [shortLink, setShortLink] = useState('')
   const [isShortening, setIsShortening] = useState(false)
+  const [showInteractionGuide, setShowInteractionGuide] = useState(false)
   const resetStatus = useRef(null)
   const latestLink = useRef('')
 
@@ -155,14 +156,58 @@ export default function SharePage() {
       </a>
 
       <header className="share-header">
-        <p className="share-hindi" lang="hi">
-          शुभ दीपावली
-        </p>
-        <h1 className="share-title">Share a Diwali wish</h1>
+        <div className="share-header-row">
+          <div>
+            <p className="share-hindi" lang="hi">
+              शुभ दीपावली
+            </p>
+            <h1 className="share-title">Share a Diwali wish</h1>
+          </div>
+          <button
+            type="button"
+            className="share-info-button"
+            aria-label="Show interactive elements"
+            aria-expanded={showInteractionGuide}
+            onClick={() => setShowInteractionGuide(true)}
+          >
+            i
+          </button>
+        </div>
         <p className="share-lede">
           Write a wish and send the link. It opens the celebration with your words on it.
         </p>
       </header>
+
+      {showInteractionGuide && (
+        <div className="share-guide" role="presentation" onClick={() => setShowInteractionGuide(false)}>
+          <section
+            className="share-guide-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="interaction-guide-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="share-guide-heading">
+              <h2 id="interaction-guide-title">What you can do</h2>
+              <button
+                type="button"
+                className="share-guide-close"
+                aria-label="Close interactive elements"
+                onClick={() => setShowInteractionGuide(false)}
+              >
+                ×
+              </button>
+            </div>
+            <ul className="share-guide-list">
+              <li><strong>Personalize</strong><span>Enter names and write a custom wish.</span></li>
+              <li><strong>Quick start</strong><span>Choose a starter chip to fill in a message.</span></li>
+              <li><strong>Share</strong><span>Copy the short link, send it on WhatsApp, or use more sharing options.</span></li>
+              <li><strong>Preview</strong><span>Open the recipient&apos;s celebration before sharing.</span></li>
+              <li><strong>Lights</strong><span>Use the celebration controls to turn lights and effects on or off.</span></li>
+            </ul>
+          </section>
+        </div>
+      )}
 
       <div className="share-grid">
         <form className="share-form" onSubmit={(event) => event.preventDefault()}>
